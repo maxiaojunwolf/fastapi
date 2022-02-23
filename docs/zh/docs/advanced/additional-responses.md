@@ -1,43 +1,43 @@
-# OpenAPI的额外响应
+# OpenAPI的附加响应
 
-您可以声明额外的响应，包括额外的状态码、媒体类型、描述等
+你可以声明附加的响应，包括附加的状态码、媒体类型、描述等。
 
-这些额外的响应将包含在 OpenAPI 架构中，因它们也将出现在 API 文档中
+这些附加的响应将包含在 OpenAPI 架构中，因它们也将出现在 API 文档中。
 
-在额外的响应中,你必须确保直接返回一个像`JSONResponse`的`Response`，包含状态码和内容.
+但是在附加的响应中,你必须确保直接返回一个类似`JSONResponse`的`Response`，包含状态码和内容。
 
-## Additional Response with `model`
+## 附加响应模型
 
-You can pass to your *path operation decorators* a parameter `responses`.
+你可以将参数响应传递给路径操作装饰器。
 
-It receives a `dict`, the keys are status codes for each response, like `200`, and the values are other `dict`s with the information for each of them.
+它接收一个字典，键是每个响应的状态代码，例如 200，值是其他字典，值中包含每个响应的信息。
 
-Each of those response `dict`s can have a key `model`, containing a Pydantic model, just like `response_model`.
+每个响应字典都有一个'model'键，对应的值是一个 Pydantic 模型，就像 response_model 一样。
 
-**FastAPI** will take that model, generate its JSON Schema and include it in the correct place in OpenAPI.
+**FastAPI** 将使用该模型，生成其 JSON Schema 并将其包含在 OpenAPI 中的正确位置。
 
-For example, to declare another response with a status code `404` and a Pydantic model `Message`, you can write:
+例如，要使用状态码 404 和 Pydantic 模型消息声明另一个响应，你可以编写：
 
 ```Python hl_lines="18  23"
 {!../../../docs_src/additional_responses/tutorial001.py!}
 ```
 
-!!! note
-    Have in mind that you have to return the `JSONResponse` directly.
+!!! 注意
+    切记必须直接返回 JSONResponse对象。
 
 !!! info
-    The `model` key is not part of OpenAPI.
+    `model`不是 OpenAPI 中的键
 
-    **FastAPI** will take the Pydantic model from there, generate the `JSON Schema`, and put it in the correct place.
+    **FastAPI** 将从那里获取 Pydantic 模型，生成 JSON Schema，并将其放在正确的位置。
 
-    The correct place is:
+    正确的位置是指：
     
-    * In the key `content`, that has as value another JSON object (`dict`) that contains:
-        * A key with the media type, e.g. `application/json`, that contains as value another JSON object, that contains:
-            * A key `schema`, that has as the value the JSON Schema from the model, here's the correct place.
-                * **FastAPI** adds a reference here to the global JSON Schemas in another place in your OpenAPI instead of including it directly. This way, other applications and clients can use those JSON Schemas directly, provide better code generation tools, etc.
+    * 在对应的值中，它具有另一个 JSON 对象 (dict) 作为值，其中包含：
+        * 具有媒体类型的key值，例如 application/json，它包含另一个 JSON 对象作为值，其中包含：
+            * 一个`schema`键，其值为模型中的 JSON 模式，这是正确的位置。
+                * **FastAPI** 在此处添加对 OpenAPI 中另一个位置的全局 JSON 模式的引用，而不是直接包含它。 这样，其他应用程序和客户端可以直接使用这些 JSON Schema，提供更好的代码生成工具等。
 
-The generated responses in the OpenAPI for this *path operation* will be:
+此路径操作在 OpenAPI 中生成的响应将如下：
 
 ```JSON hl_lines="3-12"
 {
@@ -76,7 +76,7 @@ The generated responses in the OpenAPI for this *path operation* will be:
 }
 ```
 
-The schemas are referenced to another place inside the OpenAPI schema:
+这些模式被引用到 OpenAPI 模式中的另一个地方：
 
 ```JSON hl_lines="4-16"
 {
@@ -157,11 +157,11 @@ The schemas are referenced to another place inside the OpenAPI schema:
 }
 ```
 
-## Additional media types for the main response
+## 主响应的其他媒体类型
 
-You can use this same `responses` parameter to add different media types for the same main response.
+你同样可以使用 `responses` 参数为主响应添加不同的媒体类型。
 
-For example, you can add an additional media type of `image/png`, declaring that your *path operation* can return a JSON object (with media type `application/json`) or a PNG image:
+例如，你可以添加额外的媒体类型 `image/png`，声明您的路径操作可以返回 JSON 对象（媒体类型为 `application/json`）或 PNG 图像：
 
 ```Python hl_lines="19-24  28"
 {!../../../docs_src/additional_responses/tutorial002.py!}
